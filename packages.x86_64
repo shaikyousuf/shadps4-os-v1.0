@@ -139,3 +139,14 @@ vulkan-mesa-layers
 vulkan-swrast
 mesa-utils
 openssh
+fuse2
+fuse3
+xf86-input-libinput
+ttf-dejavu
+noto-fonts
+bluez
+bluez-utils
+joystick
+pipewire
+pipewire-pulse
+wireplumber
