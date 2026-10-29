@@ -1,0 +1,51 @@
+name: Build ShadPS4 OS V1.0
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-iso:
+    name: Compile Custom Archiso
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build ISO in Arch Linux Docker
+        run: |
+          docker run --rm --privileged -v ${{ github.workspace }}:/build archlinux:latest /bin/bash -c "
+            pacman -Syu --noconfirm archiso git wget unzip
+            
+            cd /build
+            
+            echo '[*] Downloading the AppImages...'
+            wget https://github.com/shadps4-emu/shadps4-qtlauncher/releases/latest/download/shadPS4QtLauncher-qt.AppImage -O airootfs/root/shadPS4QtLauncher-qt.AppImage
+            
+            wget https://github.com/shadps4-emu/shadPS4/releases/download/v.0.20.0/shadps4-linux-sdl-0.20.0.zip -O /tmp/shadps4.zip
+            unzip -o /tmp/shadps4.zip -d /tmp/
+            
+            mv /tmp/shadps4-sdl.AppImage airootfs/root/shadps4-emulator.AppImage 2>/dev/null || \
+            mv /tmp/Shadps4-sdl.AppImage airootfs/root/shadps4-emulator.AppImage 2>/dev/null || true
+            
+            chmod +x airootfs/root/*.AppImage
+            
+            echo '[*] Building the ISO...'
+            mkarchiso -v -w /tmp/archiso-work -o out .
+            
+            echo '[*] Renaming the final ISO...'
+            mv out/archlinux-*.iso out/ShadPS4-Console-OS.iso
+          "
+
+      - name: Upload Finished ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: ShadPS4-OS-V1.0
+          path: out/ShadPS4-OS-V1.0.iso
+          retention-days: 7
