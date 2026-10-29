@@ -1,0 +1,10 @@
+{
+    "GPU": {
+        "resolution": 0,
+        "vblankFrequency": 60
+    },
+    "Vulkan": {
+        "pipeline_cache_enabled": true,
+        "validation": false
+    }
+}

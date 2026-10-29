@@ -1,0 +1,13 @@
+cat << 'EOF' > .gitignore
+# Ignore the generated ISO and build workspace
+out/
+work/
+/tmp/
+
+# Ignore the huge AppImages (we can download them via script later)
+airootfs/root/*.AppImage
+airootfs/usr/bin/shadps4
+
+# Ignore zip files
+*.zip
+EOF
